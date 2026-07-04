@@ -90,27 +90,80 @@
 
 
 
-# Intro
+# 🚀 Overview & Purpose
 
-- Schedule all your social media posts (many AI features)
-- Measure your work with analytics.
-- Collaborate with other team members to exchange or buy posts.
-- Invite your team members to collaborate, comment, and schedule posts.
-- At the moment there is no difference between the hosted version to the self-hosted version
-- Perfect for automation (API) with platforms like N8N, Make.com, Zapier, etc.
+**Postiz** is the ultimate open-source, AI-powered social media management and scheduling platform. It allows businesses, developers, and creators to automate, orchestrate, and analyze their social media presence across channels (LinkedIn, X/Twitter, Instagram, Facebook, TikTok, Mastodon, Bluesky, Discord, Slack, etc.) from a single, self-hosted console.
 
-## Tech Stack
+### Why use Postiz?
+- **Unified Social Scheduling**: Queue, preview, and post updates to multiple networks simultaneously.
+- **AI Agent Chatbot**: Integrated AI agent powered by **Mastra** and **Google Gemini** that can schedule posts, generate copy, search analytics, and configure channels natively through chat.
+- **Robust Background Jobs**: Utilizes **Temporal.io** for reliable, fault-tolerant job execution and automatic retries, ensuring post schedules never get dropped.
+- **Rich Integrations**: Supports custom third-party integrations (such as Keycloak, ElevenLabs, Claude Code, etc.) and automation workflows via N8N, Make.com, and Zapier.
 
-- Pnpm workspaces (Monorepo)
-- NextJS (React)
-- NestJS
-- Prisma (Default to PostgreSQL)
-- Temporal
-- Resend (email notifications)
+---
 
-## Quick Start
+## 🛠️ Architecture & Tech Stack
 
-To have the project up and running, please follow the [Quick Start Guide](https://docs.postiz.com/quickstart)
+- **Monorepo Management**: `pnpm` workspaces
+- **Frontend App**: Next.js (React)
+- **Backend API**: NestJS
+- **Orchestrator Worker**: NestJS + Temporal.io
+- **Database**: PostgreSQL (interfaced via Prisma ORM)
+- **In-Memory Cache**: Redis
+- **AI Framework**: Mastra Engine + Vercel AI SDK
+
+---
+
+## 💻 How to Run Locally (Step-by-Step)
+
+Follow these instructions to start the databases and services on your local machine:
+
+### 1. Start the Docker Database Services
+Ensure **Docker Desktop** is running. Then, spin up the local PostgreSQL and Redis databases:
+```powershell
+docker compose -f docker-compose.dev.yaml up -d
+```
+> [!NOTE]
+> If the `temporal` setup container exits because the database was still booting up, simply restart it using:
+> `docker start temporal`
+
+### 2. Install Workspace Dependencies
+Ensure you have Node.js (version >= 22.12.0) and run `pnpm install`:
+```powershell
+pnpm install
+```
+
+### 3. Sync Database Migrations
+Push the database schema migrations to the PostgreSQL container via Prisma:
+```powershell
+pnpm run prisma-db-push
+```
+
+### 4. Build the Projects
+Compile all backend, orchestrator, and frontend code:
+```powershell
+pnpm run build
+```
+
+### 5. Start the Application Services
+Open **three separate terminal windows** and execute the following commands to run the microservices concurrently:
+
+#### Terminal 1: Backend API Server (Port 3000)
+```powershell
+pnpm run start:prod:backend
+```
+
+#### Terminal 2: Orchestrator Service (Port 3002)
+```powershell
+pnpm run start:prod:orchestrator
+```
+
+#### Terminal 3: Frontend Server (Port 4200)
+```powershell
+pnpm run start:prod:frontend
+```
+
+Once running, access the web console locally at: **http://localhost:4200**
 
 ## Sponsor Postiz
 
