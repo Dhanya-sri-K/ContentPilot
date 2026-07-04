@@ -1,7 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { Agent } from '@mastra/core/agent';
 import { openai } from '@ai-sdk/openai';
+import { createGoogleGenerativeAI } from '@ai-sdk/google';
 import { Memory } from '@mastra/memory';
+
+const googleProvider = createGoogleGenerativeAI({
+  apiKey: process.env.GEMINI_API_KEY || process.env.GOOGLE_GENERATIVE_AI_API_KEY,
+});
 import { pStore } from '@gitroom/nestjs-libraries/chat/mastra.store';
 import { array, object, string } from 'zod';
 import { ModuleRef } from '@nestjs/core';
@@ -87,7 +92,7 @@ export class LoadToolsService {
       )}
 `;
       },
-      model: openai('gpt-5.2'),
+      model: (process.env.GEMINI_API_KEY || process.env.GOOGLE_GENERATIVE_AI_API_KEY ? googleProvider : openai.chat)((process.env.OPENAI_MODEL || (process.env.GEMINI_API_KEY || process.env.GOOGLE_GENERATIVE_AI_API_KEY ? 'gemini-2.5-flash' : 'gpt-5.2')) as any),
       tools,
       memory: new Memory({
         storage: pStore,
